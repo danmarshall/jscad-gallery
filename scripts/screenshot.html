@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JSCAD Gallery - create design</title>
+    <link rel="stylesheet" type="text/css" href="/site.css"/>
+    <script src='/browser_modules/@jscad/csg/0.3.7.js' type="text/javascript"></script>
+    <script src='/js/jscad-viewer.js' type="text/javascript"></script>
+    <script src='/js/ui.js' type="text/javascript"></script>
+    <style type="text/css">
+        #viewer {
+            border: 2px solid black;
+        }
+        textarea {
+            height: 200px;
+            width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <form action="/" method="POST">
+            
+        <ol>
+            <li>
+                <p>Smile for the camera! Touch or mouse and wheel to position and zoom the object in the frame: </p>
+                <div id="viewer-container" class="viewer-container">
+                </div>
+                <!-- TODO: handle DPI -->
+                <!-- TODO: Keyboard modifiers -->
+                <!-- TODO: Nice to switch the color -->
+            </li>
+
+            <li>
+                <p>Below are the camera settings you chose. Edit below to round the numbers when possible:</p>
+                <textarea id='camera-textbox' name="camera">{}</textarea>
+                <button type="button" onclick="setOptions()">Set the camera after you rounded</button>
+            </li>
+
+            <input type="hidden" name="image" />
+
+            <li>
+                <p>Done!</p>
+                <input type="button" onclick="getImage()" value="submit"/>
+            </li>
+
+        </ol>
+    
+    </form>
+
+    <script>
+
+        var design = _DESIGN_;  //this will get replaced by the local http server
+        var app = new JscadGallery.DesignView({ glOptions: { preserveDrawingBuffer: true } });
+        app.loadPreview(document.querySelector('#viewer-container'), design);
+        var v = app.viewer;
+        var cameraTextbox = document.querySelector('#camera-textbox');
+
+        setJson(null, { angle: v.options.camera.angle, position: v.options.camera.position }, null, 2);
+
+        app.canvas.addEventListener('mousemove', setJson);
+        app.canvas.addEventListener('wheel', setJson);
+
+        function setJson(e, camera){
+            camera = camera || {
+                angle: {x: v.angleX, y: v.angleY, z: v.angleZ},
+                position: {x: v.viewpointX, y: v.viewpointY, z: v.viewpointZ}
+            };
+            cameraTextbox.value = JSON.stringify(camera, null, 2);
+        }
+
+        function setOptions(){
+            var camera = JSON.parse(cameraTextbox.value);
+            v.options.camera = camera;
+            v.resetCamera();
+        }
+
+        function getImage() {
+            var base64 = app.canvas.toDataURL("image/png");
+            var form = document.getElementsByTagName('form')[0];
+            form.elements.image.value = base64;
+            form.submit();
+        }
+
+    </script>
+
+</body>
+</html>

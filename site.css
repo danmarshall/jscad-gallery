@@ -1,0 +1,41 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: sans-serif;
+}
+
+ul#index li {
+    display: inline-block;
+    margin: 10px;
+    width: 300px;
+}
+
+ul#index li img {
+    display: block;
+} 
+
+ul#index li img, .viewer-container, .viewer-container #viewer {
+    height: 300px;
+    width: 300px;
+} 
+
+.viewer-container {
+    position: relative;   
+}
+
+ul#index #viewer {
+    left: 0;
+    position: absolute;
+    top: 0;
+}
+
+#detail-viewer {
+    height: 400px;
+}
+
+#detail-viewer #viewer {
+    height: 400px;
+    width: 400px;
+}

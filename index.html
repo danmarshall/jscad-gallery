@@ -1,0 +1,35 @@
+---
+layout: default
+---
+
+<script>
+  var indexView = new JscadGallery.IndexView();
+</script>
+
+<h1>Jscad Gallery</h1>
+
+<ul id="index">
+    {% for post in site.posts %}
+      <script>
+        indexView.add({
+          title: {{post.title | jsonify}},
+          updated: {{post.updated | jsonify}},
+          author: {{post.author | jsonify}},
+          version: {{post.version | jsonify}},
+          dependencies: {{post.dependencies | jsonify}},
+          image: {{post.image | jsonify}},
+          camera: {{post.camera | jsonify}}
+        });
+      </script>
+      <li>
+        <a href="{{ post.url }}">
+          {{ post.title }}
+          <div class="viewer-container"
+            onmouseenter="indexView.enter(this, {{ forloop.index0 }})"
+            onmouseleave="indexView.leave(this)">
+            <img src="{{post.image}}" />
+          </div>
+        </a>
+      </li>
+    {% endfor %}
+</ul>

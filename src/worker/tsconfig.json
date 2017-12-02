@@ -1,0 +1,17 @@
+﻿{
+  "compilerOptions": {
+    "lib": [
+      "webworker",
+      "es5",
+      "scripthost"
+    ],
+    "outFile": "../../js/worker.js",
+    "sourceMap": true,
+    "types": []
+  },
+  "files": [
+    "../common.ts",
+    "manifest.ts",
+    "build-csg-worker.ts"
+  ]
+}

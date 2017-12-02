@@ -57,3 +57,5 @@ typings/
 # dotenv environment variables file
 .env
 
+# local Jekyll server generated files
+_site

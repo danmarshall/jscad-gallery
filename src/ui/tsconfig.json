@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "lib": [
+            "dom",
+            "es5"
+        ],
+        "outFile": "../../js/ui.js",
+        "sourceMap": true,
+        "types": []
+    },
+    "files": [
+        "../common.ts",
+        "app.ts",
+        "design-view.ts",
+        "params.ts",
+        "index-view.ts"
+    ]
+}

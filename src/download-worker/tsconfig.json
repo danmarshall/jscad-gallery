@@ -1,0 +1,16 @@
+﻿{
+  "compilerOptions": {
+    "lib": [
+      "webworker",
+      "es5",
+      "scripthost"
+    ],
+    "outFile": "../../js/download-worker.js",
+    "sourceMap": true,
+    "types": []
+  },
+  "files": [
+    "../common.ts",
+    "download-worker.ts"
+  ]
+}
