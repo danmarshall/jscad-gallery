@@ -1,6 +1,6 @@
 ---
 title: jscad-grommet
-permalink: jscad-grommet
+permalink: ./jscad-grommet
 author:
   name: Dan Marshall
 version: 1.0.0
