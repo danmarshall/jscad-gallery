@@ -22,7 +22,7 @@ layout: default
         });
       </script>
       <li>
-        <a href="{{ post.url }}">
+        <a href="{{ site.baseurl }}{{ post.url }}">
           {{ post.title }}
           <div class="viewer-container"
             onmouseenter="indexView.enter(this, {{ forloop.index0 }})"
