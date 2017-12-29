@@ -79,7 +79,7 @@ var JscadGallery;
             if (viewerOptions === void 0) { viewerOptions = {}; }
             var _this = _super.call(this, viewerOptions) || this;
             _this.viewerOptions = viewerOptions;
-            _this.worker = new Worker('/js/worker.js');
+            _this.worker = new Worker('js/worker.js');
             _this.worker.onmessage = function (e) {
                 var cmd = e.data;
                 if (cmd.loaded) {

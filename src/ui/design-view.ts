@@ -8,7 +8,7 @@ namespace JscadGallery {
     constructor(public viewerOptions = {}) {
       super(viewerOptions);
 
-      this.worker = new Worker('/js/worker.js');
+      this.worker = new Worker('js/worker.js');
       this.worker.onmessage = (e) => {
         const cmd = e.data as WorkerResponse;
         if (cmd.loaded) {
