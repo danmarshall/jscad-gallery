@@ -38,5 +38,5 @@ https://danmarshall.github.io/jscad-gallery
 
 1. Submit a pull request from your fork's GitHub page.
 
-## Your design must be written for Node, not OpenJSCAD
+## Your design must be written for Node, not the OpenJSCAD web UI
 TODO: tips
