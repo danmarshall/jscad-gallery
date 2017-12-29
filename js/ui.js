@@ -24,19 +24,6 @@ var JscadGallery;
                     _this.view();
                 }
             };
-            window.addEventListener('resize', function () {
-                if (!_this.viewerDiv)
-                    return;
-                var div = _this.viewerDiv.parentElement;
-                _this.detachViewer();
-                if (div) {
-                    _this.attachViewer(div);
-                    _this.view();
-                }
-                else {
-                    _this.viewer = null;
-                }
-            });
         }
         App.prototype.attachViewer = function (div) {
             this.viewerDiv = document.createElement('div');
@@ -45,6 +32,7 @@ var JscadGallery;
             var Viewer = require('@jscad/viewer');
             this.viewer = new Viewer(this.viewerDiv, this.viewerOptions);
             this.canvas = this.viewerDiv.querySelector('canvas');
+            this.setCssZoom();
         };
         App.prototype.detachViewer = function () {
             if (this.viewerDiv && this.viewerDiv.parentElement) {
@@ -62,9 +50,6 @@ var JscadGallery;
             this.viewer.setCsg(solid);
         };
         App.prototype.view = function () {
-            this.setCssZoom();
-            this.viewer.setCameraOptions(this.preview.design.camera);
-            this.viewer.resetCamera();
             this.viewCompactBinary(this.preview.compactBinary);
         };
         return App;
@@ -95,30 +80,56 @@ var JscadGallery;
                     _this.exported(cmd.exported);
                 }
             };
+            window.addEventListener('hashchange', function () {
+                _this.loadHash(true);
+            });
             return _this;
         }
-        DesignView.prototype.loadPreview = function (div, design, inputDiv) {
+        DesignView.prototype.load = function (div, design, inputDiv) {
             this.inputDiv = inputDiv;
             this.attachViewer(div);
-            var message2 = { preview: design };
-            this.downloadWorker.postMessage(message2);
-        };
-        DesignView.prototype.load = function (design) {
+            this.viewer.setCameraOptions(design.camera);
+            this.viewer.resetCamera();
+            //load the actual model
             var message = { load: design };
             this.worker.postMessage(message);
+            if (!document.location.hash.substring(1)) {
+                //load the preview
+                var message2 = { preview: design };
+                this.downloadWorker.postMessage(message2);
+            }
             //TODO - show spinner while loading
         };
         DesignView.prototype.loaded = function (loaded) {
             var _this = this;
             this.inputParams = new JscadGallery.InputParams(this.inputDiv);
             this.inputParams.onChange = function (params) {
-                //TODO: throttle & terminate, show spinner
-                var message = { run: { params: params } };
-                _this.worker.postMessage(message);
+                _this.run(params);
             };
             var params = {};
             if (loaded.parameterDefinitions) {
-                this.inputParams.createParamControls(loaded.parameterDefinitions);
+                this.paramDefs = loaded.parameterDefinitions;
+                this.loadHash(false);
+            }
+        };
+        DesignView.prototype.loadHash = function (force) {
+            if (!this.paramDefs)
+                return;
+            var paramsFromUrl = this.getParamsFromUrl(this.paramDefs);
+            this.inputParams.createParamControls(this.paramDefs, paramsFromUrl);
+            if (paramsFromUrl || force) {
+                this.run(this.inputParams.getParamValues());
+            }
+        };
+        DesignView.prototype.run = function (params) {
+            //TODO: throttle & terminate, show spinner
+            var message = { run: { params: params } };
+            this.worker.postMessage(message);
+        };
+        DesignView.prototype.getParamsFromUrl = function (defs) {
+            if (document.location.hash) {
+                var qs = document.location.hash.substring(1);
+                return new QueryStringParams(qs);
             }
         };
         DesignView.prototype["export"] = function (format, exportDiv) {
@@ -136,6 +147,19 @@ var JscadGallery;
         return DesignView;
     }(JscadGallery.App));
     JscadGallery.DesignView = DesignView;
+    var QueryStringParams = /** @class */ (function () {
+        function QueryStringParams(querystring) {
+            if (querystring === void 0) { querystring = document.location.search.substring(1); }
+            if (querystring) {
+                var pairs = querystring.split('&');
+                for (var i = 0; i < pairs.length; i++) {
+                    var pair = pairs[i].split('=');
+                    this[pair[0]] = decodeURIComponent(pair[1]);
+                }
+            }
+        }
+        return QueryStringParams;
+    }());
 })(JscadGallery || (JscadGallery = {}));
 var JscadGallery;
 (function (JscadGallery) {
@@ -202,6 +226,14 @@ var JscadGallery;
             }
             return control;
         };
+        InputParams.prototype.setValue = function (control, definition, value) {
+            switch (definition.type) {
+                case 'checkbox':
+                    control.checked = value.toString() === 'true';
+                default:
+                    control.value = value;
+            }
+        };
         InputParams.prototype.createControl = function (definition, prevValue) {
             var control_list = [
                 { type: 'text', control: 'text', required: ['index', 'type', 'name'], initial: '' },
@@ -257,7 +289,7 @@ var JscadGallery;
             control.attributes['data-paramType'] = definition.type;
             // determine initial value of control
             if (prevValue !== undefined) {
-                control.value = prevValue;
+                this.setValue(control, definition, prevValue);
             }
             else if ('initial' in definition) {
                 control.value = definition.initial;
@@ -282,6 +314,16 @@ var JscadGallery;
             //     control.label.innerHTML = control.value
             // }
             return control;
+        };
+        InputParams.prototype.createCustomUrl = function () {
+            var tr = document.createElement('tr');
+            this.parameterstable.appendChild(tr);
+            var td = document.createElement('td');
+            td.colSpan = 2;
+            tr.appendChild(td);
+            this.customUrl = document.createElement('a');
+            this.customUrl.innerText = 'link to these customizations';
+            td.appendChild(this.customUrl);
         };
         InputParams.prototype.createParamControls = function (paramDefinitions, prevParamValues) {
             var _this = this;
@@ -346,6 +388,10 @@ var JscadGallery;
                 }
                 this.parameterstable.appendChild(tr);
             }
+            if (paramDefinitions.length > 0) {
+                this.createCustomUrl();
+                this.getParamValues();
+            }
         };
         InputParams.prototype.getParamValues = function () {
             var paramValues = {};
@@ -398,6 +444,11 @@ var JscadGallery;
                 paramValues[control.attributes['data-paramName']] = value;
                 // console.log(control.paramName+":"+paramValues[control.paramName])
             }
+            var href = [];
+            for (var id in paramValues) {
+                href.push(id + "=" + encodeURIComponent(paramValues[id]));
+            }
+            this.customUrl.href = '#' + href.join('&');
             return paramValues;
         };
         return InputParams;
@@ -411,6 +462,19 @@ var JscadGallery;
         function IndexView() {
             var _this = _super.call(this) || this;
             _this.designs = [];
+            window.addEventListener('resize', function () {
+                if (!_this.viewerDiv)
+                    return;
+                var div = _this.viewerDiv.parentElement;
+                _this.detachViewer();
+                if (div) {
+                    _this.attachViewer(div);
+                    _this.view();
+                }
+                else {
+                    _this.viewer = null;
+                }
+            });
             return _this;
         }
         IndexView.prototype.add = function (design) {
@@ -427,6 +491,8 @@ var JscadGallery;
             }
             this.viewerDiv.style.visibility = 'hidden';
             this.viewer.clear();
+            this.viewer.setCameraOptions(design.camera);
+            this.viewer.resetCamera();
             //TODO show spinner
             var message = { preview: design };
             this.downloadWorker.postMessage(message);

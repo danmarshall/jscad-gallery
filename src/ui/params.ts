@@ -3,6 +3,7 @@ namespace JscadGallery {
     export class InputParams {
         private parameterstable: HTMLTableElement;
         private paramControls: HTMLElement[];
+        private customUrl: HTMLAnchorElement;
 
         public onChange: (paramValues: ParamValues) => void;
 
@@ -67,6 +68,15 @@ namespace JscadGallery {
             return control
         }
 
+        private setValue(control: HTMLInputElement, definition: ParameterDefinition, value) {
+            switch (definition.type) {
+                case 'checkbox':
+                    control.checked = value.toString() === 'true'
+                default:
+                    control.value = value;
+            }
+        }
+
         private createControl(definition: ParameterDefinition, prevValue) {
             var control_list = [
                 { type: 'text', control: 'text', required: ['index', 'type', 'name'], initial: '' },
@@ -118,7 +128,7 @@ namespace JscadGallery {
             control.attributes['data-paramType'] = definition.type
             // determine initial value of control
             if (prevValue !== undefined) {
-                control.value = prevValue
+                this.setValue(control, definition, prevValue)
             } else if ('initial' in definition) {
                 control.value = definition.initial
             } else if ('default' in definition) {
@@ -140,6 +150,17 @@ namespace JscadGallery {
             //     control.label.innerHTML = control.value
             // }
             return control
+        }
+
+        private createCustomUrl() {
+            var tr = document.createElement('tr')
+            this.parameterstable.appendChild(tr)
+            var td = document.createElement('td')
+            td.colSpan = 2
+            tr.appendChild(td)
+            this.customUrl = document.createElement('a');
+            this.customUrl.innerText = 'link to these customizations'
+            td.appendChild(this.customUrl)
         }
 
         createParamControls(paramDefinitions: ParameterDefinition[], prevParamValues: ParamValues = {}) {
@@ -205,6 +226,10 @@ namespace JscadGallery {
                 }
                 this.parameterstable.appendChild(tr)
             }
+            if (paramDefinitions.length > 0) {
+                this.createCustomUrl()
+                this.getParamValues()
+            }
         }
 
         getParamValues() {
@@ -255,6 +280,13 @@ namespace JscadGallery {
                 paramValues[control.attributes['data-paramName']] = value
                 // console.log(control.paramName+":"+paramValues[control.paramName])
             }
+
+            const href: string[] = [];
+            for (var id in paramValues) {
+                href.push(`${id}=${encodeURIComponent(paramValues[id])}`)
+            }
+            this.customUrl.href = '#' + href.join('&');
+
             return paramValues
         }
     }

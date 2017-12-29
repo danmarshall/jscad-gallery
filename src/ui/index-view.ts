@@ -6,6 +6,18 @@ namespace JscadGallery {
 
         constructor() {
             super();
+
+            window.addEventListener('resize', () => {
+                if (!this.viewerDiv) return;
+                var div = this.viewerDiv.parentElement;
+                this.detachViewer();
+                if (div) {
+                    this.attachViewer(div);
+                    this.view();
+                } else {
+                    this.viewer = null;
+                }
+            });
         }
 
         add(design: Design) {
@@ -25,6 +37,9 @@ namespace JscadGallery {
             this.viewerDiv.style.visibility = 'hidden';
             this.viewer.clear();
 
+            this.viewer.setCameraOptions(design.camera);
+            this.viewer.resetCamera();
+
             //TODO show spinner
 
             const message: DownloadRequest = { preview: design };
@@ -37,7 +52,7 @@ namespace JscadGallery {
             this.viewerDiv.style.visibility = '';
 
             clearInterval(this.spinInterval);
-            
+
             this.spinInterval = setInterval(() => {
                 this.preview.design.camera.angle.z += 0.25;
                 this.viewer.setCameraOptions(this.preview.design.camera);

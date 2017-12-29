@@ -5,6 +5,7 @@ namespace JscadGallery {
     private inputParams: InputParams;
     private inputDiv: HTMLElement;
     private exportDiv: HTMLElement;
+    private paramDefs: ParameterDefinition[];
 
     constructor(public viewerOptions = {}) {
       super(viewerOptions);
@@ -22,20 +23,29 @@ namespace JscadGallery {
           this.exported(cmd.exported);
         }
       };
+
+      window.addEventListener('hashchange', () => {
+        this.loadHash(true);
+      });
+
     }
 
-    loadPreview(div: HTMLDivElement, design: Design, inputDiv: HTMLElement) {
+    load(div: HTMLDivElement, design: Design, inputDiv: HTMLElement) {
       this.inputDiv = inputDiv;
 
       this.attachViewer(div);
-      const message2: DownloadRequest = { preview: design };
-      this.downloadWorker.postMessage(message2);
-    }
+      this.viewer.setCameraOptions(design.camera);
+      this.viewer.resetCamera();
 
-    load(design: Design) {
-
+      //load the actual model
       const message: WorkerRequest = { load: design };
       this.worker.postMessage(message);
+
+      if (!document.location.hash.substring(1)) {
+        //load the preview
+        const message2: DownloadRequest = { preview: design };
+        this.downloadWorker.postMessage(message2);
+      }
 
       //TODO - show spinner while loading
 
@@ -44,15 +54,36 @@ namespace JscadGallery {
     loaded(loaded: LoadedItem) {
       this.inputParams = new InputParams(this.inputDiv);
       this.inputParams.onChange = (params) => {
-        //TODO: throttle & terminate, show spinner
-        var message: WorkerRequest = { run: { params } };
-        this.worker.postMessage(message);
+        this.run(params);
       };
 
       const params = {};
       if (loaded.parameterDefinitions) {
-        this.inputParams.createParamControls(loaded.parameterDefinitions);
+        this.paramDefs = loaded.parameterDefinitions;
+        this.loadHash(false);
+      }
+    }
 
+    loadHash(force: boolean) {
+      if (!this.paramDefs) return;
+      var paramsFromUrl = this.getParamsFromUrl(this.paramDefs);
+      this.inputParams.createParamControls(this.paramDefs, paramsFromUrl);
+      if (paramsFromUrl || force) {
+        this.run(this.inputParams.getParamValues());
+      }
+
+    }
+
+    run(params: ParamValues) {
+      //TODO: throttle & terminate, show spinner
+      var message: WorkerRequest = { run: { params } };
+      this.worker.postMessage(message);
+    }
+
+    getParamsFromUrl(defs: ParameterDefinition[]): ParamValues {
+      if (document.location.hash) {
+        const qs = document.location.hash.substring(1);
+        return new QueryStringParams(qs) as ParamValues;
       }
     }
 
@@ -73,4 +104,18 @@ namespace JscadGallery {
     }
 
   }
+
+  class QueryStringParams {
+
+    constructor(querystring: string = document.location.search.substring(1)) {
+      if (querystring) {
+        var pairs = querystring.split('&');
+        for (var i = 0; i < pairs.length; i++) {
+          var pair = pairs[i].split('=');
+          this[pair[0]] = decodeURIComponent(pair[1]);
+        }
+      }
+    }
+  }
+
 }

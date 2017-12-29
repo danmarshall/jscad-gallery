@@ -16,18 +16,6 @@ namespace JscadGallery {
                     this.view();
                 }
             };
-
-            window.addEventListener('resize', () => {
-                if (!this.viewerDiv) return;
-                var div = this.viewerDiv.parentElement;
-                this.detachViewer();
-                if (div) {
-                    this.attachViewer(div);
-                    this.view();
-                } else {
-                    this.viewer = null;
-                }
-            });
         }
 
         attachViewer(div: HTMLElement) {
@@ -37,6 +25,7 @@ namespace JscadGallery {
             const Viewer = require('@jscad/viewer');
             this.viewer = new Viewer(this.viewerDiv, this.viewerOptions);
             this.canvas = this.viewerDiv.querySelector('canvas');
+            this.setCssZoom();
         }
 
         detachViewer() {
@@ -58,11 +47,6 @@ namespace JscadGallery {
         }
 
         view() {
-            this.setCssZoom();
-
-            this.viewer.setCameraOptions(this.preview.design.camera);
-            this.viewer.resetCamera();
-
             this.viewCompactBinary(this.preview.compactBinary);
         }
     }
