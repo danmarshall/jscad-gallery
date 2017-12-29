@@ -27,7 +27,7 @@ layout: default
           <div class="viewer-container"
             onmouseenter="indexView.enter(this, {{ forloop.index0 }})"
             onmouseleave="indexView.leave(this)">
-            <img src="{{post.image}}" />
+            <img src="{{ site.baseurl }}{{post.image}}" />
           </div>
         </a>
       </li>

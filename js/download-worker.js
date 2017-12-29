@@ -1,7 +1,7 @@
 //Common interfaces
 var compactBinary;
 function downloadPreviewCompactBinary(design) {
-    var url = "/browser_modules/" + design.title + "/compact-binary.js";
+    var url = "../browser_modules/" + design.title + "/compact-binary.js";
     importScripts(url);
     var message = {
         preview: {
