@@ -1,4 +1,10 @@
 let _module;
+let lastResult;
+let defaultParams: { [name: string]: any };
+
+const exportLibs: { [format: string]: { url: string, loaded: boolean } } = {
+    "stl": { url: "jscad-stl-serializer.js", loaded: false }
+};
 
 function loadModule(design: Design) {
 
@@ -20,16 +26,36 @@ function loadModule(design: Design) {
     const loaded: LoadedItem = {};
     if (typeof _module.getParameterDefinitions === 'function') {
         loaded.parameterDefinitions = _module.getParameterDefinitions();
+        defaultParams = {};
+        loaded.parameterDefinitions.forEach(pd => {
+            defaultParams[pd.name] = pd.initial;
+        });
     }
     const message: WorkerResponse = { loaded };
     postMessage(message);
 }
 
 function runModule(params) {
-    const result = _module(params);
-    const compactBinary = result.toCompactBinary();
+    lastResult = _module(params);
+    const compactBinary = lastResult.toCompactBinary();
     const message: WorkerResponse = { ran: { compactBinary } };
     postMessage(message);
+}
+
+function exportModule(format: string) {
+    if (!exportLibs[format].loaded) {
+        importScripts(exportLibs[format].url);
+        exportLibs[format].loaded = true;
+    }
+    switch (format) {
+        case 'stl':
+            const stlSerializer = require('@jscad/stl-serializer');
+            const solid = lastResult || _module(defaultParams);
+            const data = stlSerializer.serialize(solid, { binary: false });
+            const message: WorkerResponse = { exported: { format, data } };
+            postMessage(message);
+            break;
+    }
 }
 
 onmessage = function (e) {
@@ -38,5 +64,7 @@ onmessage = function (e) {
         loadModule(cmd.load);
     } else if (cmd.run) {
         runModule(cmd.run.params);
+    } else if (cmd.export) {
+        exportModule(cmd.export.format);
     }
 }

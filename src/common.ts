@@ -58,9 +58,14 @@ interface DownloadResponse {
     preview?: DownloadCompactBinaryResponse;
 }
 
+interface ExportRequest {
+    format: string;
+}
+
 interface WorkerRequest {
     load?: Design;
     run?: { params?: ParamValues };
+    export?: ExportRequest;
 }
 
 interface LoadedItem {
@@ -71,7 +76,13 @@ interface RanItem {
     compactBinary: any; //TODO CSG
 }
 
+interface ExportedItem {
+    format: string;
+    data: any;
+}
+
 interface WorkerResponse {
     loaded?: LoadedItem;
     ran?: RanItem;
+    exported?: ExportedItem;
 }

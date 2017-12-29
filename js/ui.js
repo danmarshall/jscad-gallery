@@ -88,6 +88,9 @@ var JscadGallery;
                 else if (cmd.ran) {
                     _this.viewCompactBinary(cmd.ran.compactBinary);
                 }
+                else if (cmd.exported) {
+                    _this.exported(cmd.exported);
+                }
             };
             return _this;
         }
@@ -114,6 +117,14 @@ var JscadGallery;
             if (loaded.parameterDefinitions) {
                 this.inputParams.createParamControls(loaded.parameterDefinitions);
             }
+        };
+        DesignView.prototype["export"] = function (format, exportDiv) {
+            this.exportDiv = exportDiv;
+            var message = { "export": { format: format } };
+            this.worker.postMessage(message);
+        };
+        DesignView.prototype.exported = function (exportedItem) {
+            this.exportDiv.innerHTML = "<a href=\"data:application/" + exportedItem.format + "," + encodeURIComponent(exportedItem.data) + "\" download=\"export." + exportedItem.format + "\">download " + exportedItem.format + "</a>";
         };
         return DesignView;
     }(JscadGallery.App));

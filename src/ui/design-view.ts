@@ -4,6 +4,7 @@ namespace JscadGallery {
     private worker: Worker;
     private inputParams: InputParams;
     private inputDiv: HTMLElement;
+    private exportDiv: HTMLElement;
 
     constructor(public viewerOptions = {}) {
       super(viewerOptions);
@@ -15,6 +16,8 @@ namespace JscadGallery {
           this.loaded(cmd.loaded);
         } else if (cmd.ran) {
           this.viewCompactBinary(cmd.ran.compactBinary);
+        } else if (cmd.exported) {
+          this.exported(cmd.exported);
         }
       };
     }
@@ -50,5 +53,16 @@ namespace JscadGallery {
 
       }
     }
+
+    export(format: string, exportDiv: HTMLElement) {
+      this.exportDiv = exportDiv;
+      var message: WorkerRequest = { export: { format } };
+      this.worker.postMessage(message);
+    }
+
+    exported(exportedItem: ExportedItem) {
+      this.exportDiv.innerHTML = `<a href="data:application/${exportedItem.format},${encodeURIComponent(exportedItem.data)}" download="export.${exportedItem.format}">download ${exportedItem.format}</a>`;
+    }
+
   }
 }

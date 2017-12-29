@@ -9,6 +9,7 @@
     "build-worker": "tsc -p ./src/worker/",
     "build-ui": "tsc -p ./src/ui/",
     "build-viewer": "browserify node_modules/@jscad/openjscad/src/ui/viewer/jscad-viewer.js -r ./node_modules/@jscad/openjscad/src/ui/viewer/jscad-viewer.js:@jscad/viewer -o js/jscad-viewer.js -t [babelify browserify minifyify]",
+    "build-jscad-stl": "browserify -r @jscad/stl-serializer --ignore @jscad/csg -o js/jscad-stl-serializer.js",
     "build-common": "node ./scripts/build-common.js"
   },
   "repository": {
