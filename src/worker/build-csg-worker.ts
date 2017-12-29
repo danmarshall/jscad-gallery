@@ -2,7 +2,7 @@ let _module;
 
 function loadModule(design: Design) {
 
-    const basePath = "/browser_modules/";
+    const basePath = "../browser_modules/";
 
     //load dependencies first
     if (design.dependencies.length > 0) {

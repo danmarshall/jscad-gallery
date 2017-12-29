@@ -5,7 +5,7 @@ var commonDependencyUrls = {
 };
 var _module;
 function loadModule(design) {
-    var basePath = "/browser_modules/";
+    var basePath = "../browser_modules/";
     //load dependencies first
     if (design.dependencies.length > 0) {
         design.dependencies.forEach(function (d) {
