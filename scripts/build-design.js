@@ -13,6 +13,7 @@ const glob = require("glob");
 const design = {
     title: process.argv[2]
 }
+design.permalink = design.title;
 
 console.log(`building ${design.title}...`);
 
