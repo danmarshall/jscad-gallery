@@ -88,6 +88,9 @@ var JscadGallery;
                 else if (cmd.ran) {
                     _this.viewCompactBinary(cmd.ran.compactBinary);
                 }
+                else if (cmd.exportProgress) {
+                    _this.exportProgress(cmd.exportProgress);
+                }
                 else if (cmd.exported) {
                     _this.exported(cmd.exported);
                 }
@@ -120,8 +123,12 @@ var JscadGallery;
         };
         DesignView.prototype["export"] = function (format, exportDiv) {
             this.exportDiv = exportDiv;
+            exportDiv.innerHTML = '';
             var message = { "export": { format: format } };
             this.worker.postMessage(message);
+        };
+        DesignView.prototype.exportProgress = function (progress) {
+            this.exportDiv.innerText = Math.ceil(progress) + '%';
         };
         DesignView.prototype.exported = function (exportedItem) {
             this.exportDiv.innerHTML = "<a href=\"data:application/" + exportedItem.format + "," + encodeURIComponent(exportedItem.data) + "\" download=\"export." + exportedItem.format + "\">download " + exportedItem.format + "</a>";

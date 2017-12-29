@@ -42,6 +42,13 @@ function runModule(params) {
     postMessage(message);
 }
 
+function statusCallback(status) {
+    const message: WorkerResponse = {
+        exportProgress: status.progress
+    };
+    postMessage(message);
+}
+
 function exportModule(format: string) {
     if (!exportLibs[format].loaded) {
         importScripts(exportLibs[format].url);
@@ -51,7 +58,7 @@ function exportModule(format: string) {
         case 'stl':
             const stlSerializer = require('@jscad/stl-serializer');
             const solid = lastResult || _module(defaultParams);
-            const data = stlSerializer.serialize(solid, { binary: false });
+            const data = stlSerializer.serialize(solid, { binary: false, statusCallback });
             const message: WorkerResponse = { exported: { format, data } };
             postMessage(message);
             break;

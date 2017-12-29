@@ -16,6 +16,8 @@ namespace JscadGallery {
           this.loaded(cmd.loaded);
         } else if (cmd.ran) {
           this.viewCompactBinary(cmd.ran.compactBinary);
+        } else if (cmd.exportProgress) {
+          this.exportProgress(cmd.exportProgress);
         } else if (cmd.exported) {
           this.exported(cmd.exported);
         }
@@ -56,8 +58,14 @@ namespace JscadGallery {
 
     export(format: string, exportDiv: HTMLElement) {
       this.exportDiv = exportDiv;
+      exportDiv.innerHTML = '';
+
       var message: WorkerRequest = { export: { format } };
       this.worker.postMessage(message);
+    }
+
+    exportProgress(progress: number) {
+      this.exportDiv.innerText = Math.ceil(progress) + '%';
     }
 
     exported(exportedItem: ExportedItem) {

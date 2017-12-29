@@ -85,4 +85,5 @@ interface WorkerResponse {
     loaded?: LoadedItem;
     ran?: RanItem;
     exported?: ExportedItem;
+    exportProgress?: number;
 }
