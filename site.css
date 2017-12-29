@@ -39,3 +39,7 @@ ul#index #viewer {
     height: 400px;
     width: 400px;
 }
+
+footer {
+    margin-top: 5em;
+}
