@@ -16,7 +16,7 @@ var JscadGallery;
             if (viewerOptions === void 0) { viewerOptions = {}; }
             var _this = this;
             this.viewerOptions = viewerOptions;
-            this.downloadWorker = new Worker('/js/download-worker.js');
+            this.downloadWorker = new Worker('js/download-worker.js');
             this.downloadWorker.onmessage = function (e) {
                 var cmd = e.data;
                 if (cmd.preview) {

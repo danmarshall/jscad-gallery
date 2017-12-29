@@ -8,7 +8,7 @@ namespace JscadGallery {
         public canvas: HTMLCanvasElement;
 
         constructor(public viewerOptions = {}) {
-            this.downloadWorker = new Worker('/js/download-worker.js');
+            this.downloadWorker = new Worker('js/download-worker.js');
             this.downloadWorker.onmessage = (e) => {
                 const cmd = e.data as DownloadResponse;
                 if (cmd.preview) {
