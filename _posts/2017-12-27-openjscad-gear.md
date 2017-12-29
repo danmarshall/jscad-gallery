@@ -1,5 +1,6 @@
 ---
 title: openjscad-gear
+permalink: openjscad-gear
 author:
   name: Dan Marshall
 version: 1.0.0

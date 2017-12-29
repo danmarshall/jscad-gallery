@@ -1,5 +1,6 @@
 ---
 title: jscad-rimbox
+permalink: jscad-rimbox
 author:
   name: Dan Marshall
 version: 1.0.0
