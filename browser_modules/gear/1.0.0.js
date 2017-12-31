@@ -1,5 +1,15 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"openjscad-gear":[function(require,module,exports){
-var { CAG, CSG } = require('@jscad/csg');
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"gear":[function(require,module,exports){
+//this file is a template for converting jscad to a Node module
+const scadApi = require('@jscad/scad-api')
+const { difference, intersection, union } = scadApi.booleanOps;
+const { CAG, CSG } = scadApi.csg;
+const { echo } = scadApi.debug;
+const { linear_extrude, rectangular_extrude, rotate_extrude } = scadApi.extrusions;
+const { abs, acos, asin, atan, atan2, ceil, cos, floor, log, lookup, max, min, pow, rands, round, sign, sin, sqrt, tan } = scadApi.maths;
+const { OpenJsCad } = scadApi.OpenJsCad;
+const { circle, polygon, square, triangle } = scadApi.primitives2d;
+const { cube, cylinder, geodesicSphere, polyhedron, sphere, torus } = scadApi.primitives3d;
+const { center, chain_hull, contract, expand, hull, minkowski, mirror, multmatrix } = scadApi.transformations;
 
 // title      : Gear
 // author     : Joost Nieuwenhuijse
@@ -10,7 +20,7 @@ var { CAG, CSG } = require('@jscad/csg');
 // Here we define the user editable parameters: 
 function getParameterDefinitions() {
   return [
-    { name: 'numTeeth', caption: 'Number of teeth:', type: 'int', initial: 10 },
+    { name: 'numTeeth', caption: 'Number of teeth:', type: 'int', initial: 10, min: 5,max: 20, step: 1 },
     { name: 'circularPitch', caption: 'Circular pitch:', type: 'float', initial: 5 },
     { name: 'pressureAngle', caption: 'Pressure angle:', type: 'float', initial: 20 },
     { name: 'clearance', caption: 'Clearance:', type: 'float', initial: 0 },
@@ -122,7 +132,12 @@ function involuteGear(numTeeth, circularPitch, pressureAngle, clearance, thickne
   return result;
 }
 
-module.exports = main;
-module.exports.getParameterDefinitions = getParameterDefinitions;
 
-},{"@jscad/csg":"@jscad/csg"}]},{},[]);
+
+module.exports = main;
+
+if (typeof getParameterDefinitions === 'function') {
+    module.exports.getParameterDefinitions = getParameterDefinitions;
+}
+
+},{"@jscad/scad-api":"@jscad/scad-api"}]},{},[]);
