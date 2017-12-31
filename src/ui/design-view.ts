@@ -52,6 +52,8 @@ namespace JscadGallery {
     }
 
     loaded(loaded: LoadedItem) {
+      if (!this.inputDiv) return;
+      
       this.inputParams = new InputParams(this.inputDiv);
       this.inputParams.onChange = (params) => {
         this.run(params);

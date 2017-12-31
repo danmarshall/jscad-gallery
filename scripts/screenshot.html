@@ -53,7 +53,7 @@
 
         var design = _DESIGN_;  //this will get replaced by the local http server
         var app = new JscadGallery.DesignView({ glOptions: { preserveDrawingBuffer: true } });
-        app.loadPreview(document.querySelector('#viewer-container'), design);
+        app.load(document.querySelector('#viewer-container'), design);
         var v = app.viewer;
         var cameraTextbox = document.querySelector('#camera-textbox');
 

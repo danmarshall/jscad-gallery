@@ -102,6 +102,8 @@ var JscadGallery;
         };
         DesignView.prototype.loaded = function (loaded) {
             var _this = this;
+            if (!this.inputDiv)
+                return;
             this.inputParams = new JscadGallery.InputParams(this.inputDiv);
             this.inputParams.onChange = function (params) {
                 _this.run(params);
