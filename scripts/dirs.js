@@ -1,8 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
-function dirs(designName) {
-    const dirIn = path.resolve(__dirname, '../node_modules', designName);
+function dirs(designName, org) {
+    const dirIn = path.resolve(__dirname, '../node_modules', org || '', designName);
     const dirOut = path.resolve(__dirname, '../browser_modules', designName);
     if (!fs.existsSync(dirOut)) {
         fs.mkdirSync(dirOut);

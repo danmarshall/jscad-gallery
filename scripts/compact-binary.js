@@ -1,8 +1,9 @@
 const fs = require("fs");
 var serialize = require('serialize-to-js').serialize;
 
-function getCompactBinary(moduleName) {
-    const _module = require(moduleName);
+function getCompactBinary(org, moduleName) {
+    const orgPath = org ? org + '/' : '';
+    const _module = require(orgPath + moduleName);
     const params = {};
     if (typeof _module.getParameterDefinitions === 'function') {
         const defs = _module.getParameterDefinitions();
@@ -15,8 +16,8 @@ function getCompactBinary(moduleName) {
     return compactBinary;
 }
 
-function saveCompactBinary(moduleName, fullPath) {
-    const compactBinary = getCompactBinary(moduleName);
+function saveCompactBinary(org, moduleName, fullPath) {
+    const compactBinary = getCompactBinary(org, moduleName);
     const content = 'compactBinary=' + serialize(compactBinary);
     fs.writeFileSync(fullPath, content);
 }
