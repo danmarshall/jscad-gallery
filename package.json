@@ -35,6 +35,7 @@
     "@jscad/csg": "^0.3.7",
     "@jscad/io": "^0.3.10",
     "@jscad/openjscad": "git+https://github.com/danmarshall/OpenJSCAD.org.git#9b10cbaa09bb5c806b4d18ffa05d97a6dbc2d377",
+    "@jscad/scad-api": "^0.4.2",
     "babel-core": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babelify": "^8.0.0",
@@ -54,6 +55,7 @@
   },
   "common": [
     "@jscad/csg",
+    "@jscad/scad-api",
     "makerjs"
   ],
   "browserify": {
