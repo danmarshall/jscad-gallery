@@ -9,6 +9,7 @@ const { OpenJsCad } = scadApi.OpenJsCad;
 const { circle, polygon, square, triangle } = scadApi.primitives2d;
 const { cube, cylinder, geodesicSphere, polyhedron, sphere, torus } = scadApi.primitives3d;
 const { center, chain_hull, contract, expand, hull, minkowski, mirror, multmatrix } = scadApi.transformations;
+const { vector_char, vector_text } = scadApi.text;
 
 //CONTENT
 
