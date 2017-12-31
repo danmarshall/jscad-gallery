@@ -19,9 +19,17 @@ https://danmarshall.github.io/jscad-gallery
 
     ```npm install your-git-remote-url```
 
-1. Run the command
+1. Generate your design files:
 
-    ```npm run build-design -- your-package-name```
+    If your design is a Node.js module:
+
+    ```npm run build-design your-package-name```
+
+    or, if your design is a .jscad file:
+
+    ```npm run build-jscad path-to-your-jscad-file.jscad```
+
+    [Note - this will convert your .jscad file to a Node.js module, look in your `node_modules\@jscad-gallery` folder]
 
 1. A local web page will appear. Follow the instructions to create a thumbnail image and post metadata.
 1. Stage your local changes:
@@ -37,6 +45,3 @@ https://danmarshall.github.io/jscad-gallery
     ```git push```
 
 1. Submit a pull request from your fork's GitHub page.
-
-## Your design must be written for Node, not the OpenJSCAD web UI
-TODO: tips
