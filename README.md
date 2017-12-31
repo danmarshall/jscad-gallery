@@ -29,7 +29,9 @@ https://danmarshall.github.io/jscad-gallery
 
     ```npm run build-jscad path-to-your-jscad-file.jscad```
 
-    [Note - this will convert your .jscad file to a Node.js module, look in your `node_modules\@jscad-gallery` folder]
+    Note - this will convert your .jscad file to a Node.js module, look in your `node_modules\@jscad-gallery` folder. You can edit the `package.json` and regenerate the new Node.js module directly by calling:
+
+    ```npm run build-design @jscad-gallery/your-jscad-package-name```
 
 1. A local web page will appear. Follow the instructions to create a thumbnail image and post metadata.
 1. Stage your local changes:
