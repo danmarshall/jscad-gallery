@@ -53,7 +53,7 @@
     "opn": "^5.1.0",
     "querystring": "^0.2.0",
     "readline-sync": "^1.4.7",
-    "serialize-to-js": "^1.1.1",
+    "serialize-to-js": "^3.0.0",
     "typescript": "^2.6.2"
   },
   "common": [
