@@ -18,15 +18,15 @@ interface Design {
 }
 
 interface ParameterDefinition {
-    type: string;
+    type?: string;
     caption: string;
     captions: string[];
     checked: boolean;
-    default: string;
+    default?: string;
     index: number;
     name: string;
-    initial: any;
-    values: string[];
+    initial?: any;
+    values?: string[];
 }
 
 interface ParamValues {
