@@ -9,7 +9,7 @@
     "build-download-worker": "tsc -p ./src/download-worker/",
     "build-worker": "tsc -p ./src/worker/",
     "build-ui": "tsc -p ./src/ui/",
-    "build-viewer": "browserify node_modules/@jscad/openjscad/src/ui/viewer/jscad-viewer.js -r ./node_modules/@jscad/openjscad/src/ui/viewer/jscad-viewer.js:@jscad/viewer -o js/jscad-viewer.js -t [babelify browserify minifyify]",
+    "build-viewer": "browserify node_modules/@jscad/openjscad/src/ui/viewer/jscad-viewer.js -r ./node_modules/@jscad/openjscad/src/ui/viewer/jscad-viewer.js:@jscad/viewer -o js/jscad-viewer.js -t [babelify browserify]",
     "build-jscad-stl": "browserify -r @jscad/stl-serializer --ignore @jscad/csg -o js/jscad-stl-serializer.js",
     "build-common": "node ./scripts/build-common.js"
   },
@@ -49,7 +49,6 @@
     "js-yaml": "^3.10.0",
     "jscad-includify": "^1.0.1",
     "licensify": "^3.1.3",
-    "minifyify": "^7.3.5",
     "opn": "^5.1.0",
     "querystring": "^0.2.0",
     "readline-sync": "^1.4.7",
