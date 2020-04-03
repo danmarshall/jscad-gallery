@@ -1,4 +1,4 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"@jscad/viewer":[function(require,module,exports){
+require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({"@jscad/viewer":[function(require,module,exports){
 'use strict';
 
 var LightGLEngine = require('./jscad-viewer-lightgl');
@@ -3264,6 +3264,7 @@ module.exports = GL;
 
   // removeAll :: (a -> boolean) -> [a] -> [a]
   // remove all elements matching a predicate
+  // @deprecated
   function removeAll(f, a) {
     var l = a.length;
     var b = new Array(l);
@@ -4868,10 +4869,6 @@ var _Pipe = require('../sink/Pipe');
 
 var _Pipe2 = _interopRequireDefault(_Pipe);
 
-var _PropagateTask = require('../scheduler/PropagateTask');
-
-var _PropagateTask2 = _interopRequireDefault(_PropagateTask);
-
 var _Map = require('../fusion/Map');
 
 var _Map2 = _interopRequireDefault(_Map);
@@ -4886,13 +4883,11 @@ function _interopRequireDefault(obj) {
  * @param {Stream} stream
  * @returns {Stream}
  */
-/** @license MIT License (c) copyright 2010-2016 original author or authors */
-/** @author Brian Cavalier */
-/** @author John Hann */
-
 function throttle(period, stream) {
   return new _Stream2.default(throttleSource(period, stream.source));
-}
+} /** @license MIT License (c) copyright 2010-2016 original author or authors */
+/** @author Brian Cavalier */
+/** @author John Hann */
 
 function throttleSource(period, source) {
   return source instanceof _Map2.default ? commuteMapThrottle(period, source) : source instanceof Throttle ? fuseThrottle(period, source) : new Throttle(period, source);
@@ -4964,7 +4959,12 @@ function DebounceSink(dt, source, sink, scheduler) {
 DebounceSink.prototype.event = function (t, x) {
   this._clearTimer();
   this.value = x;
-  this.timer = this.scheduler.delay(this.dt, _PropagateTask2.default.event(x, this.sink));
+  this.timer = this.scheduler.delay(this.dt, new DebounceTask(this, x));
+};
+
+DebounceSink.prototype._event = function (t, x) {
+  this._clearTimer();
+  this.sink.event(t, x);
 };
 
 DebounceSink.prototype.end = function (t, x) {
@@ -4994,7 +4994,22 @@ DebounceSink.prototype._clearTimer = function () {
   return true;
 };
 
-},{"../Stream":15,"../fusion/Map":47,"../scheduler/PropagateTask":56,"../sink/Pipe":63}],27:[function(require,module,exports){
+function DebounceTask(debounce, value) {
+  this.debounce = debounce;
+  this.value = value;
+}
+
+DebounceTask.prototype.run = function (t) {
+  this.debounce._event(t, this.value);
+};
+
+DebounceTask.prototype.error = function (t, e) {
+  this.debounce.error(t, e);
+};
+
+DebounceTask.prototype.dispose = function () {};
+
+},{"../Stream":15,"../fusion/Map":47,"../sink/Pipe":63}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5122,7 +5137,7 @@ var reduce = base.reduce;
  * list in time order.  If two events are simultaneous they will be merged in
  * arbitrary order.
  */
-function merge() /* ...streams*/{
+function merge() /* ...streams */{
   return mergeArray(copy(arguments));
 }
 
@@ -7257,6 +7272,8 @@ function _interopRequireDefault(obj) {
 /** @author Brian Cavalier */
 /** @author John Hann */
 
+/* eslint import/first: 0 */
+
 exports.Stream = _Stream2.default;
 
 // Add of and empty to constructor for fantasy-land compat
@@ -7562,7 +7579,7 @@ exports.mergeArray = _merge.mergeArray;
  * arbitrary order.
  */
 
-_Stream2.default.prototype.merge = function () /* ...streams*/{
+_Stream2.default.prototype.merge = function () /* ...streams */{
   return (0, _merge.mergeArray)(base.cons(this, arguments));
 };
 
@@ -7579,7 +7596,7 @@ exports.combineArray = _combine.combineArray;
  *  event of each input stream, whenever a new event arrives on any stream.
  */
 
-_Stream2.default.prototype.combine = function (f /*, ...streams*/) {
+_Stream2.default.prototype.combine = function (f /*, ...streams */) {
   return (0, _combine.combineArray)(f, base.replace(this, 0, arguments));
 };
 
@@ -7625,7 +7642,7 @@ exports.zipArray = _zip.zipArray;
  * @returns {Stream} new stream containing pairs
  */
 
-_Stream2.default.prototype.zip = function (f /*, ...streams*/) {
+_Stream2.default.prototype.zip = function (f /*, ...streams */) {
   return (0, _zip.zipArray)(f, base.replace(this, 0, arguments));
 };
 
@@ -7964,7 +7981,7 @@ exports.default = invoke;
 /** @author John Hann */
 
 function invoke(f, args) {
-  /*eslint complexity: [2,7]*/
+  /* eslint complexity: [2,7] */
   switch (args.length) {
     case 0:
       return f();
@@ -7996,14 +8013,14 @@ exports.makeIterable = makeIterable;
 /** @author Brian Cavalier */
 /** @author John Hann */
 
-/*global Set, Symbol*/
+/* global Set, Symbol */
 var iteratorSymbol;
 // Firefox ships a partial implementation using the name @@iterator.
 // https://bugzilla.mozilla.org/show_bug.cgi?id=907077#c14
 if (typeof Set === 'function' && typeof new Set()['@@iterator'] === 'function') {
   iteratorSymbol = '@@iterator';
 } else {
-  iteratorSymbol = typeof Symbol === 'function' && Symbol.iterator || '_es6shim_iterator_';
+  iteratorSymbol = typeof Symbol === 'function' ? Symbol.iterator : '_es6shim_iterator_';
 }
 
 function isIterable(o) {
@@ -8337,7 +8354,7 @@ exports.default = ClockTimer;
 
 var _task = require('../task');
 
-/*global setTimeout, clearTimeout*/
+/* global setTimeout, clearTimeout */
 
 function ClockTimer() {} /** @license MIT License (c) copyright 2010-2016 original author or authors */
 /** @author Brian Cavalier */
@@ -9784,9 +9801,6 @@ function runTask(task) {
 }
 
 },{}],78:[function(require,module,exports){
-module.exports = require('./lib/index');
-
-},{"./lib/index":79}],79:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -9820,7 +9834,7 @@ var result = (0, _ponyfill2['default'])(root);
 exports['default'] = result;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./ponyfill.js":80}],80:[function(require,module,exports){
+},{"./ponyfill.js":79}],79:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
