@@ -7,7 +7,6 @@ const { saveCompactBinary } = require('./compact-binary');
 const { browserifyDesign } = require('./browserify');
 const { getCommonDependencies } = require('./dependencies');
 const { launch } = require('./http');
-const base64Img = require('base64-img');
 const glob = require("glob");
 
 function buildDesign(designTitle, org) {
@@ -42,7 +41,10 @@ function buildDesign(designTitle, org) {
         console.log(` form data received`);
 
         console.log(` writing base64 to png...`);
-        var filepath = base64Img.imgSync(formData.image, dir.out, 'thumbnail');
+        let base64Image = base64String.split(';base64,').pop();
+        fs.writeFileSync(path.join(dir.out, `${thumbnail}.png`), base64Image, { encoding: 'base64' }, function (err) {
+            console.log('Thumbnail file created');
+        });
 
         design.layout = "detail";
         design.image = `/browser_modules/${design.title}/thumbnail.png`;
